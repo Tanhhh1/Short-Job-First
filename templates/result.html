@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SJF Scheduling Result</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #abb3c0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
+        margin: 0;
+    }
+    .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 1000px;
+        text-align: center;
+    }
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+    th {
+        background-color: #76797c;
+        color: white;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    p {
+        font-size: 16px;
+        color: #555;
+        margin-top: 10px;
+    }
+</style>
+<body>
+    <div class="container result">
+        <h1>SJF Scheduling Result</h1>
+        <table border="1">
+            <tr>
+                <th>Process Name</th>
+                <th>Arrival Time</th>
+                <th>Burst Time</th>
+                <th>Completion Time</th>
+                <th>Turnaround Time</th>
+                <th>Waiting Time</th>
+            </tr>
+            {% for process in processes %}
+            <tr>
+                <td>{{ process.name }}</td>
+                <td>{{ process.arrival_time }}</td>
+                <td>{{ process.burst_time }}</td>
+                <td>{{ process.completion_time }}</td>
+                <td>{{ process.turnaround_time }}</td>
+                <td>{{ process.waiting_time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <p>Average waiting time: {{ "%.2f" | format(average_waiting_time) }}</p>
+        <p>Average completion time: {{ "%.2f" | format(average_turnaround_time) }}</p>
+    </div>
+</body>
+
+</html>

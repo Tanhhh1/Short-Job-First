@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SJF Scheduling Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #abb3c0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            background-color: #76797c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: rgb(80, 82, 83);
+        }
+
+        #submit-btn {
+            display: none;
+            width: 100%;
+        }
+    </style>
+    <script>
+        function renderForms() {
+            const numInput = document.getElementById('n');
+            const num = numInput.value;
+            const formContainer = document.getElementById('form-container');
+            const submitButton = document.getElementById('submit-btn');
+            const generateButton = document.getElementById('generate-btn');
+
+            if (!num || num <= 0) {
+                numInput.setCustomValidity("Please enter a valid number of processes.");
+                numInput.reportValidity();
+                return;
+            } else {
+                numInput.setCustomValidity("");
+            }
+
+            formContainer.innerHTML = '';
+            generateButton.style.display = 'none'; 
+            submitButton.style.display = 'block'; 
+
+            for (let i = 0; i < num; i++) {
+                formContainer.innerHTML += `
+                    <div class="form-group">
+                        <label>Process ${i + 1}:</label>
+                        <input type="text" name="name_${i}" placeholder="Name" required>
+                        <input type="number" name="arrival_time_${i}" placeholder="Arrival Time" min="0" required>
+                        <input type="number" name="burst_time_${i}" placeholder="Burst Time" min="1" required>
+                    </div>
+                `;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const numInput = document.getElementById('n');
+            numInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); 
+                    renderForms(); 
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>SJF Scheduling</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="n">Enter number of processes:</label>
+                <input type="number" id="n" name="n" min="1" required>
+            </div>
+            <button type="button" id="generate-btn" onclick="renderForms()">Generate</button>
+            <div id="form-container"></div>
+            <button type="submit" id="submit-btn">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>
