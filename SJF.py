@@ -11,6 +11,7 @@ class Process:
         self.completion_time = 0
         self.turnaround_time = 0
         self.waiting_time = 0
+        self.start_time = 0
 
 def sjf_scheduling(processes):
     processes.sort(key=lambda x: x.arrival_time)
@@ -33,6 +34,7 @@ def sjf_scheduling(processes):
                         idx = i
 
         if idx != -1:
+            processes[idx].start_time = current_time
             current_time += processes[idx].burst_time
             processes[idx].completion_time = current_time
             processes[idx].turnaround_time = processes[idx].completion_time - processes[idx].arrival_time

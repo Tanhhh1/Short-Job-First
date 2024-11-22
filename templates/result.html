@@ -5,62 +5,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SJF Scheduling Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #abb3c0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 1200px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1,
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #76797c;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .gantt-chart {
+            display: flex;
+            height: 60px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            position: relative;
+        }
+
+        .gantt-bar {
+            flex: 0 0 auto;
+            height: 100%;
+            background-color: #76b5c5;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 60px;
+            border-right: 1px solid white;
+            width: var(--width);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gantt-bar:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            background: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 10;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </head>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #abb3c0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 80vh;
-        margin: 0;
-    }
-    .container {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        width: 80%;
-        max-width: 1000px;
-        text-align: center;
-    }
-    h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: #333;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: center;
-    }
-    th {
-        background-color: #76797c;
-        color: white;
-    }
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-    p {
-        font-size: 16px;
-        color: #555;
-        margin-top: 10px;
-    }
-</style>
+
 <body>
     <div class="container result">
         <h1>SJF Scheduling Result</h1>
-        <table border="1">
+        <table>
             <tr>
                 <th>Process Name</th>
                 <th>Arrival Time</th>
                 <th>Burst Time</th>
+                <th>Start Time</th>
                 <th>Completion Time</th>
                 <th>Turnaround Time</th>
                 <th>Waiting Time</th>
@@ -70,6 +122,7 @@
                 <td>{{ process.name }}</td>
                 <td>{{ process.arrival_time }}</td>
                 <td>{{ process.burst_time }}</td>
+                <td>{{ process.start_time }}</td>
                 <td>{{ process.completion_time }}</td>
                 <td>{{ process.turnaround_time }}</td>
                 <td>{{ process.waiting_time }}</td>
@@ -77,8 +130,32 @@
             {% endfor %}
         </table>
         <p>Average waiting time: {{ "%.2f" | format(average_waiting_time) }}</p>
-        <p>Average completion time: {{ "%.2f" | format(average_turnaround_time) }}</p>
+        <p>Average turnaround time: {{ "%.2f" | format(average_turnaround_time) }}</p>
+
+        <h2>Gantt Chart</h2>
+        <div class="gantt-chart">
+            {% set total_time = processes|map(attribute='completion_time')|max %}
+            {% set scale = 100 / total_time %} 
+            {% set last_completion = 0 %}
+        
+            {% for process in processes|sort(attribute='start_time') %}
+                {% set start = process.start_time %}
+                {% set end = process.completion_time %}
+                {% set gap = start - last_completion %}
+        
+                {% set width = process.burst_time * scale %}
+        
+                {% set left = start * scale %}
+        
+                <div class="gantt-bar" style="--left: {{ left }}%; --width: {{ width }}%;" data-tooltip="{{ process.name }} ({{ start }} - {{ end }})">
+                    {{ process.name }}
+                </div>
+        
+                {% set last_completion = end %}
+            {% endfor %}
+        </div>
+        
     </div>
 </body>
 
-</html>
+</html> 
